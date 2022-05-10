@@ -1,19 +1,18 @@
 var mysql = require('mysql');
 
-const tableName = 'record'
-
 const {
     HOST='localhost',
     DATABASE='db',
     PORT=3306,
     USERNAME="me",
-    PWD="secret"
+    PASSWORD="secret",
+    TABLE_NAME="table"
 } = process.env
 
 const connection = mysql.createConnection({
   host     : HOST,
   user     : USERNAME,
-  password : PWD,
+  password : PASSWORD,
   port     : PORT,
 });
 
@@ -37,15 +36,16 @@ try {
                     return connection.end()
                 }
                 
-                connection.query(`CREATE TABLE IF NOT EXISTS ${tableName}(
+                connection.query(`CREATE TABLE IF NOT EXISTS ${TABLE_NAME}(
                     id INT UNSIGNED AUTO_INCREMENT,
                     name VARCHAR(40) NOT NULL,
                     time DATE NOT NULL,
                     price INT NOT NULL,
                     count INT NOT NULL,
                     prev_count INT,
-                    cost INT NOT NULL,
+                    average_cost INT NOT NULL,
                     type INT NOT NULL,
+                    group INT NOT NULL,
                     ratio INT,
                     PRIMARY KEY (id)
                 ) DEFAULT CHARSET=utf8`, (err) => {

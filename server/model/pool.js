@@ -5,13 +5,13 @@ const {
     DATABASE='db',
     PORT=3306,
     USERNAME="me",
-    PWD="secret"
+    PASSWORD="secret"
 } = process.env
 
 module.exports = mysql.createPool({
   host     : HOST,
   user     : USERNAME,
-  password : PWD,
+  password : PASSWORD,
   port     : PORT,
   database : DATABASE
 });
