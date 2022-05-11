@@ -6,7 +6,7 @@ const {
     PORT=3306,
     USERNAME="me",
     PASSWORD="secret",
-    TABLE_NAME="table"
+    TABLE="table"
 } = process.env
 
 const connection = mysql.createConnection({
@@ -15,8 +15,6 @@ const connection = mysql.createConnection({
   password : PASSWORD,
   port     : PORT,
 });
-
-
 
 try {
     connection.connect(function(err) {
@@ -36,17 +34,17 @@ try {
                     return connection.end()
                 }
                 
-                connection.query(`CREATE TABLE IF NOT EXISTS ${TABLE_NAME}(
-                    id INT UNSIGNED AUTO_INCREMENT,
-                    name VARCHAR(40) NOT NULL,
-                    time DATE NOT NULL,
-                    price INT NOT NULL,
-                    count INT NOT NULL,
-                    prev_count INT,
-                    average_cost INT NOT NULL,
-                    type INT NOT NULL,
-                    group INT NOT NULL,
-                    ratio INT,
+                connection.query(`CREATE TABLE IF NOT EXISTS \`${TABLE}\`(
+                    \`id\` INT UNSIGNED AUTO_INCREMENT,
+                    \`name\` VARCHAR(40) NOT NULL,
+                    \`date\` VARCHAR(40) NOT NULL,
+                    \`price\` INT NOT NULL,
+                    \`count\` INT NOT NULL,
+                    \`prev_count\` INT,
+                    \`average_cost\` INT NOT NULL,
+                    \`type\` INT NOT NULL,
+                    \`group\` INT NOT NULL,
+                    \`ratio\` INT,
                     PRIMARY KEY (id)
                 ) DEFAULT CHARSET=utf8`, (err) => {
                     if (err)

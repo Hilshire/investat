@@ -6,4 +6,7 @@ const nextConfig = {
   }
 }
 
+// init when server start
+require('./server/model/async')
+
 module.exports = nextConfig

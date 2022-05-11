@@ -11,6 +11,11 @@ function wp(c, str) {
     })
 }
 
+function handleError(e) {
+    console.log(e)
+    throw e
+}
+
 class Record {
     constructor() {
         this._pool = pool
@@ -27,36 +32,36 @@ class Record {
         })
     }
     add(r) {
-        const {id, name, time, price, count, prevCount, averageCost, type, ratio, group} = r
+        const {name, date, price, count, prevCount, averageCost, type, ratio, group} = r
         return this.getConnection().then((c) => {
             return wp(c, `INSERT INTO ${table}
-            (id, name, time, price, count, prev_count, average_cost, type, ratio, group)
+            (name, date, price, count, prev_count, average_cost, type, ratio, \`group\`)
             VALUES
-            (${id}, ${name}, ${time}, ${price}, ${count}, ${prevCount}, ${averageCost}, ${type}, ${ratio}, ${group})`).catch(e => console.log(e)).finally(c.release())
-        }).catch((e) => console.log(e))
+            (${name}, '${date}', ${price}, ${count}, ${prevCount}, ${averageCost}, ${type}, ${ratio}, ${group})`).catch(handleError).finally(c.release())
+        }).catch(handleError)
     }
     del(id) {
         return this.getConnection().then((c) => {
-            return wp(c,`DELETE FROM ${table} WHERE id=${id}`).catch(e => console.log(e)).finally(c.release())
-        }).catch(e => console.log(e))
+            return wp(c,`DELETE FROM ${table} WHERE id=${id}`).catch(handleError).finally(c.release())
+        }).catch(handleError)
     }
     put(r) {
-        const {id, name, time, price, count, prevCount, averageCost, type, ratio, group} = r
+        const {id, name, date, price, count, prevCount, averageCost, type, ratio, group} = r
         return this.getConnection().then((c) => {
             return wp(c, `UPDATE ${table}
-            SET name=${name}, time=${time}, price=${price}, count=${count}, prev_count=${prevCount}, average_cost=${averageCost}, type=${type}, ratio=${ratio}, group=${group})
-            WHERE id=${id}`).catch(e => console.log(e)).finally(c.release())
-        }).catch((e) => console.log(e))
+            SET name=${name}, date=${date}, price=${price}, count=${count}, prev_count=${prevCount}, average_cost=${averageCost}, type=${type}, ratio=${ratio}, group=${group})
+            WHERE id=${id}`).catch(handleError).finally(c.release())
+        }).catch(handleError)
     }
     query(id) {
         return this.getConnection().then((c) => {
-            return wp(c, `SELECT * from ${table} WHERE id=${id}`).catch(e => console.log(e)).finally(c.release())
-        }).catch(e => console.log(e))
+            return wp(c, `SELECT * from ${table} WHERE id=${id}`).catch(handleError).finally(c.release())
+        }).catch(handleError)
     }
     queryList() {
         return this.getConnection().then((c) => {
-            return wp(c, `SELECT * from ${table}`).catch(e => console.log(e)).finally(c.release())
-        }).catch(e => console.log(e))
+            return wp(c, `SELECT * from ${table}`).catch(handleError).finally(c.release())
+        }).catch(handleError)
     }
 }
 
