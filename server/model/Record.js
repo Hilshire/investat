@@ -37,7 +37,7 @@ class Record {
             return wp(c, `INSERT INTO ${table}
             (name, date, price, count, prev_count, average_cost, type, ratio, \`group\`)
             VALUES
-            (${name}, '${date}', ${price}, ${count}, ${prevCount}, ${averageCost}, ${type}, ${ratio}, ${group})`).catch(handleError).finally(c.release())
+            ('${name}', '${date}', '${price}', '${count}', '${prevCount}', '${averageCost}', '${type}', '${ratio}', '${group}')`).catch(handleError).finally(c.release())
         }).catch(handleError)
     }
     del(id) {
