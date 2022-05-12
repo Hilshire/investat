@@ -1,7 +1,7 @@
 const record = require('../../../server/model/Record')
 
 module.exports = function getRecords(req, res) {
-    const { method, query: { id } } = req
+    const { method, query: { id }, body } = req
     if (!id) {
         res.status(500).json({error: 1, msg: 'need id'})
     }
@@ -18,6 +18,12 @@ module.exports = function getRecords(req, res) {
                     res.status(200).json(r)
                 }) 
                 .catch(handleError)
+            break
+        case 'PUT':
+            record.put(JSON.parse(body))
+                .then(r => {
+                    res.status(200).json(r)
+                }).catch(handleError)
             break
         case 'DELETE':
             record.del(id)

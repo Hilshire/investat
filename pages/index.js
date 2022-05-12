@@ -1,9 +1,15 @@
 import { useState, useEffect } from 'react'
-import { Table, Button } from 'react-bootstrap'
+import { Table, Button, Modal } from 'react-bootstrap'
+import { Modify } from '../common/components'
 
+const { Footer, Body, Header } = Modal
 
 export default function Home() {
   const [list, setList] = useState([])
+  const [type, setType] = useState('ADD')
+  const [data, setData] = useState({ group: 1, type: 1 })
+  const [visible, setVisible] = useState(false)
+
   useEffect(() => {
     queryList()
   }, [])
@@ -22,22 +28,50 @@ export default function Home() {
     })
   }
 
+  function add() {
+    setType('ADD')
+    setVisible(true)
+  }
+  function modify(data) {
+    setType('MODIFY')
+    if (data.date) {
+      setData({ ...data, date: new Date(data.date)})
+    }
+    setVisible(true)
+  }
+
   return (
     <>
+      <Button onClick={add}>新增</Button>
       <Table>
         <thead>
           <tr><th>#</th><th>时间</th><th>名称</th><th>单价</th><th>份数</th><th>总价</th><th>平均成本</th><th>盈利率</th><th>操作</th></tr>
         </thead>
         <tbody>
-          {list.map(({name, date, price, count, prevCount, averageCost, type, ratio, group, id}, i) => <tr key={id}>
-            <td>{i+1}</td><td>{date}</td><td>{name}</td><td>{price}</td><td>{count}</td><td>cost</td><td>{averageCost}</td><td>{ratio}</td>
-            <td><Button onClick={() => remove(id)}>删除</Button></td>
-          </tr>)}
+          {list.map((d, i) => {
+            const {name, date, price, count, prev_count, average_cost, type, ratio, group, id} = d
+            return <tr key={id}>
+              <td>{i+1}</td><td>{date}</td><td>{name}</td><td>{price}</td><td>{count}</td><td>cost</td><td>{average_cost}</td><td>{ratio}</td>
+              <td>
+                <Button size="sm" onClick={() => remove(id)}>删除</Button>
+                {' '}
+                <Button size="sm" onClick={() => modify(d)}>修改</Button>
+              </td>
+            </tr>
+          })}
         </tbody>
       </Table>
-      <div>
-        {JSON.stringify(list)}
-      </div>
+      <Modal show={visible} onExiting={() => setData({ group: 1, type: 1 })}>
+        <Header>
+          {type === 'ADD' ? '新增' : '修改'}
+        </Header>
+        <Body>
+          <Modify data={data} setData={setData} type={type} queryList={queryList}></Modify>
+        </Body>
+        <Footer>
+          <Button onClick={() => setVisible(false)}>关闭</Button>
+        </Footer>
+      </Modal>
     </>
   )
 }
