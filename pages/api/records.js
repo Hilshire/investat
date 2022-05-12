@@ -1,40 +1,43 @@
 const record = require('../../server/model/Record')
+const { verifyJwt } = require('../../common/util')
 
 module.exports = function getRecords(req, res) {
-    const { method } = req
+    const { method, headers: { token } } = req
+
+    if (!verifyJwt(token)) {
+        return res.status(401).json({ errno: 2 })
+    }
+
     function handleError(e) {
-        res.status(500).json({
+        return res.status(500).json({
             error: e.errno || 0
         })
     }
     switch(method) {
         case 'GET':
-            record.queryList()
+            return record.queryList()
             .then(r => {
                 res.status(200).json(r)
             }) 
             .catch(handleError)
-            break
         case 'POST':
-            record.add(JSON.parse(req.body))
+            return record.add(JSON.parse(req.body))
                 .then(r => {
                     res.status(200).json(r)
                 })
                 .catch(handleError)
-            break
         case 'DELETE':
             {
                 const id = req.query.id
                 if (id) {
-                    record.del(id)
+                    return record.del(id)
                         .then(r => {
                             res.status(200).json(r)
                         })
                         .catch(handleError)
                 } else {
-                    res.status(500).json({error: 1, msg: 'need id'})
+                    return res.status(500).json({error: 1, msg: 'need id'})
                 }
-                break
             }
     }
 }

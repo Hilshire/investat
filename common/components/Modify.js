@@ -3,7 +3,7 @@ import DatePicker from 'react-datepicker'
 
 const { Group, Label, Control, Select } = Form
 
-export default function Modify({data, setData, type, queryList}) {
+export default function Modify({data, setData, type, token}) {
   function submit(e) {
     e.preventDefault()
     if (!data.date) {
@@ -19,6 +19,7 @@ export default function Modify({data, setData, type, queryList}) {
   function create(data) {
     fetch('/api/records', {
       method: 'post',
+      headers: {token},
       body: JSON.stringify(data)
     }).then((res) => {
       if(res.status === 200)
@@ -30,6 +31,7 @@ export default function Modify({data, setData, type, queryList}) {
   function update(data) {
     fetch('/api/record?id='+data.id, {
       method: 'put',
+      headers: {token},
       body: JSON.stringify(data)
     }).then((res) => {
       if (res.status === 200)

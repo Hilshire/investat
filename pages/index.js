@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Table, Button, Modal } from 'react-bootstrap'
+import { useRouter } from 'next/router'
 import { Modify } from '../common/components'
+import { getToken } from '../common/util'
 
 const { Footer, Body, Header } = Modal
 
@@ -9,19 +11,35 @@ export default function Home() {
   const [type, setType] = useState('ADD')
   const [data, setData] = useState({ group: 1, type: 1 })
   const [visible, setVisible] = useState(false)
+  const router = useRouter()
+
+  let token
 
   useEffect(() => {
+    token = getToken()
+
+    if (!token) {
+      router.push('/login?target=' + router.pathname)
+    }
+
     queryList()
   }, [])
 
   function queryList() {
-    fetch('/api/records').then(async res => {
-      setList(await res.json())
+    fetch('/api/records', { headers: { token }}).then(async res => {
+      res = await res.json()
+      
+      if (res.errno && res.errno === 2)
+        router.push('/login?target=' + router.pathname)
+
+      setList(await res)
+    }).catch(() => {
+      alert('fail')
     })
   }
 
   function remove(id) {
-    fetch('/api/record?id='+id, { method: 'DELETE'}).then(res => {
+    fetch('/api/record?id='+id, { method: 'DELETE', headers: {token}}).then(res => {
       if (res.status === 200) {
         queryList()
       }
@@ -66,7 +84,7 @@ export default function Home() {
           {type === 'ADD' ? '新增' : '修改'}
         </Header>
         <Body>
-          <Modify data={data} setData={setData} type={type} queryList={queryList}></Modify>
+          <Modify data={data} setData={setData} type={type} queryList={queryList} token={token}></Modify>
         </Body>
         <Footer>
           <Button onClick={() => setVisible(false)}>关闭</Button>
