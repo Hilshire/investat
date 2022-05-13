@@ -41,7 +41,7 @@ try {
                     \`price\` INT NOT NULL,
                     \`count\` INT NOT NULL,
                     \`prev_count\` INT,
-                    \`average_cost\` INT NOT NULL,
+                    \`average_cost\` INT,
                     \`type\` INT NOT NULL,
                     \`group\` INT NOT NULL,
                     \`ratio\` INT,

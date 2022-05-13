@@ -32,12 +32,12 @@ class Record {
         })
     }
     add(r) {
-        const {name, date, price, count, prev_count, average_cost, type, ratio, group} = r
         return this.getConnection().then((c) => {
             return wp(c, `INSERT INTO ${table}
-            (name, date, price, count, prev_count, average_cost, type, ratio, \`group\`)
-            VALUES
-            ('${name}', '${date}', '${price}', '${count}', '${prev_count}', '${average_cost}', '${type}', '${ratio}', '${group}')`).catch(handleError).finally(c.release())
+                (${Object.keys(r).map(k => "`"+k+"`").join(',')})
+                VALUES
+                (${Object.keys(r).map(k => "'" +r[k] + "'").join(',')})
+            `).catch(handleError).finally(c.release())
         }).catch(handleError)
     }
     del(id) {
@@ -46,11 +46,10 @@ class Record {
         }).catch(handleError)
     }
     put(r) {
-        const {id, name, date, price, count, prev_count, average_cost, type, ratio, group} = r
         return this.getConnection().then((c) => {
             return wp(c, `UPDATE ${table}
-            SET name='${name}', date='${date}', price='${price}', count='${count}', prev_count='${prev_count}', average_cost='${average_cost}', type='${type}', ratio='${ratio}', \`group\`='${group}'
-            WHERE id=${id}`).catch(handleError).finally(c.release())
+            SET ${Object.keys(r).filter(k => k !== 'id').map(k => `\`${k}\`='${r[k]}'`).join(',')}
+            WHERE id=${r.id}`).catch(handleError).finally(c.release())
         }).catch(handleError)
     }
     query(id) {

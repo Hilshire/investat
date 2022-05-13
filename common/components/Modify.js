@@ -1,44 +1,58 @@
 import { Form, Button } from 'react-bootstrap'
 import DatePicker from 'react-datepicker'
+import { useRouter } from 'next/router'
 
 const { Group, Label, Control, Select } = Form
 
-export default function Modify({data, setData, type, token}) {
+export default function Modify({data, setData, type, token, queryList}) {
+  const router = useRouter()
+
   function submit(e) {
     e.preventDefault()
     if (!data.date) {
       return alert('choose date')
     }
+    let p
     if (type === 'ADD') {
-      create(data)
+      p = create(data)
     }
     if (type === 'MODIFY' && data.id) {
-      update(data)
+      p = update(data)
     }
-  }
-  function create(data) {
-    fetch('/api/records', {
-      method: 'post',
-      headers: {token},
-      body: JSON.stringify(data)
-    }).then((res) => {
-      if(res.status === 200)
+    p.then((res) => {
+      if (res.status === 200) {
+        queryList()
         alert('success')
-      else
+      } else if (res.status === 401) {
+        router.push('/login?target=' + router.pathname)
+      } else {
         throw new Error('error')
+      }
     }).catch(e => alert('error'))
   }
+  function formatData(data) {
+    data = {
+      ...data,
+      average_cost: data.average_cost ? data.average_cost * 10000 : undefined,
+      price: data.price * 100
+    }
+
+    Object.keys(data).filter(k => !data[k]).forEach(k => delete data[k])
+    return data
+  }
+  function create(data) {
+    return fetch('/api/records', {
+      method: 'post',
+      headers: {token},
+      body: JSON.stringify(formatData(data))
+    })
+  }
   function update(data) {
-    fetch('/api/record?id='+data.id, {
+    return fetch('/api/record?id='+data.id, {
       method: 'put',
       headers: {token},
-      body: JSON.stringify(data)
-    }).then((res) => {
-      if (res.status === 200)
-        alert('success')
-      else
-        throw new Error('error')
-    }).catch(e => alert('error')) 
+      body: JSON.stringify(formatData(data))
+    }) 
   }
 
   return (
@@ -85,7 +99,7 @@ export default function Modify({data, setData, type, token}) {
         </Group>
         <Group>
           <Label>平均成本</Label>
-          <Control type='number' onChange={e => setData({ ...data, average_cost: Math.round(e.target.value * 10000) })} required value={Math.round(data.average_cost/10000)}></Control>
+          <Control type='number' onChange={e => setData({ ...data, average_cost: Math.round(e.target.value) })} value={Math.round(data.average_cost)}></Control>
         </Group>
         <Group>
           <Label>未统计数量</Label>
@@ -93,7 +107,7 @@ export default function Modify({data, setData, type, token}) {
         </Group>
         <Group>
           <Label>收益率</Label>
-          <Control type='number' onChange={e => setData({ ...data, ratio: e.target.value})} value={data.ratio} required></Control> %
+          <Control type='number' onChange={e => setData({ ...data, ratio: e.target.value})} value={data.ratio}></Control> %
         </Group>
       </Form>
     </>

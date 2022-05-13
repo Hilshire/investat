@@ -7,30 +7,37 @@ import { getToken } from '../common/util'
 const { Footer, Body, Header } = Modal
 
 export default function Home() {
+  const initData = Object.freeze({
+    group: 1, type: 1, name: '', date: '', price: 0, count: 0, prev_count: undefined, average_cost: undefined, ratio: undefined,
+  })
+
   const [list, setList] = useState([])
   const [type, setType] = useState('ADD')
-  const [data, setData] = useState({ group: 1, type: 1 })
+  const [data, setData] = useState(initData)
+  const [token, setToken] = useState(null)
   const [visible, setVisible] = useState(false)
   const router = useRouter()
 
-  let token
-
   useEffect(() => {
-    token = getToken()
-
+    let token = getToken()
     if (!token) {
       router.push('/login?target=' + router.pathname)
     }
-
-    queryList()
+    setToken(getToken())
   }, [])
+
+  useEffect(() => {
+    if (token) {
+      queryList()
+    }
+  }, [token])
 
   function queryList() {
     fetch('/api/records', { headers: { token }}).then(async res => {
       res = await res.json()
       
       if (res.errno && res.errno === 2)
-        router.push('/login?target=' + router.pathname)
+        return router.push('/login?target=' + router.pathname)
 
       setList(await res)
     }).catch(() => {
@@ -53,7 +60,12 @@ export default function Home() {
   function modify(data) {
     setType('MODIFY')
     if (data.date) {
-      setData({ ...data, date: new Date(data.date)})
+      setData({
+        ...data,
+        date: new Date(data.date),
+        price: data.price / 100,
+        average_cost: data.average_cost ? data.average_cost / 10000 : undefined
+      })
     }
     setVisible(true)
   }
@@ -69,7 +81,8 @@ export default function Home() {
           {list.map((d, i) => {
             const {name, date, price, count, prev_count, average_cost, type, ratio, group, id} = d
             return <tr key={id}>
-              <td>{i+1}</td><td>{date}</td><td>{name}</td><td>{price}</td><td>{count}</td><td>cost</td><td>{average_cost}</td><td>{ratio}</td>
+              <td>{i+1}</td><td>{new Date(date).toLocaleDateString()}</td><td>{name}</td><td>{price / 100}</td><td>{count}</td>
+              <td>{count*price/100}</td><td>{average_cost/10000}</td><td>{ratio}</td>
               <td>
                 <Button size="sm" onClick={() => remove(id)}>删除</Button>
                 {' '}
@@ -79,7 +92,7 @@ export default function Home() {
           })}
         </tbody>
       </Table>
-      <Modal show={visible} onExiting={() => setData({ group: 1, type: 1 })}>
+      <Modal show={visible} onExiting={() => setData(initData)}>
         <Header>
           {type === 'ADD' ? '新增' : '修改'}
         </Header>
