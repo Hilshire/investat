@@ -32,12 +32,15 @@ export default function Home() {
     }
   }, [token])
 
+  function redirect() {
+    router.push('/login?target=' + router.pathname)
+  }
   function queryList() {
     fetch('/api/records', { headers: { token }}).then(async res => {
       res = await res.json()
       
       if (res.errno && res.errno === 2)
-        return router.push('/login?target=' + router.pathname)
+        return redirect()
 
       setList(await res)
     }).catch(() => {
@@ -46,11 +49,14 @@ export default function Home() {
   }
 
   function remove(id) {
-    fetch('/api/record?id='+id, { method: 'DELETE', headers: {token}}).then(res => {
-      if (res.status === 200) {
-        queryList()
-      }
-    })
+    if (window.confirm('are you sure?')) {
+      fetch('/api/record?id='+id, { method: 'DELETE', headers: {token}}).then(res => {
+        if (res.status === 401) redirect()
+        if (res.status === 200) {
+          queryList()
+        }
+      })
+    }
   }
 
   function add() {
@@ -59,14 +65,17 @@ export default function Home() {
   }
   function modify(data) {
     setType('MODIFY')
-    if (data.date) {
-      setData({
-        ...data,
-        date: new Date(data.date),
-        price: data.price / 100,
-        average_cost: data.average_cost ? data.average_cost / 10000 : undefined
-      })
+
+    if (!(data.date instanceof Date)) {
+      data.date = null    
     }
+    setData({
+      ...data,
+      date: new Date(data.date),
+      price: data.price / 100,
+      average_cost: data.average_cost ? data.average_cost / 10000 : undefined
+    })
+  
     setVisible(true)
   }
 

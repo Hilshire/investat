@@ -33,8 +33,8 @@ export default function Modify({data, setData, type, token, queryList}) {
   function formatData(data) {
     data = {
       ...data,
-      average_cost: data.average_cost ? data.average_cost * 10000 : undefined,
-      price: data.price * 100
+      average_cost: data.average_cost ? Math.round(data.average_cost * 10000) : undefined,
+      price: Math.round(data.price * 100)
     }
 
     Object.keys(data).filter(k => !data[k]).forEach(k => delete data[k])
@@ -97,12 +97,17 @@ export default function Modify({data, setData, type, token, queryList}) {
           <Label>数量</Label>
           <Control type="number" onChange={e => setData({ ...data, count: e.target.value })} required value={data.count}></Control>
         </Group>
+        {/* not sure should keep it */}
+        {/* <Group>
+          <Label>总价</Label>
+          <Control type="number" onChange={e => setData({ ...data, cost: e.target.value })} required value={data.cost}></Control>
+        </Group> */}
         <Group>
           <Label>平均成本</Label>
           <Control type='number' onChange={e => setData({ ...data, average_cost: Math.round(e.target.value) })} value={Math.round(data.average_cost)}></Control>
         </Group>
         <Group>
-          <Label>未统计数量</Label>
+          <Label>持仓</Label>
           <Control type='number' onChange={e => setData({ ...data, prev_count: e.target.value })} value={data.prev_count}></Control>
         </Group>
         <Group>
