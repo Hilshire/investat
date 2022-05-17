@@ -9,9 +9,13 @@ const host = 'http://localhost:3000/'
 try {
     (async function() {
         const etfs = readFileSync(filePath).toString()
-        const rows = etfs.split(/\r\n|\n/).map(
+        let rows = etfs.split(/\r\n|\n/)
+        rows.shift()
+        rows = rows.map(
             row => {
                 const [time, name, count, average, cost, empty, positionAver, positionCount, positionCost, ratio=null] = row.split(',')
+                if (!time)
+                    return
                 const rst = {
                     name,
                     date: new Date(time),
@@ -29,8 +33,7 @@ try {
                 })
                 return rst
             }
-        )
-        rows.shift()
+        ).filter(i => i)
         for (let i=0;i<rows.length;i++) {
             await fetch(join(host,'/api/records'), {
                 method: 'post',

@@ -1,5 +1,5 @@
 const record = require('../../server/model/Record')
-const { verifyJwt } = require('../../common/util')
+const { verifyJwt, formatData } = require('../../common/util')
 
 module.exports = function getRecords(req, res) {
     const { method, headers: { token } } = req
@@ -21,7 +21,7 @@ module.exports = function getRecords(req, res) {
             }) 
             .catch(handleError)
         case 'POST':
-            return record.add(JSON.parse(req.body))
+            return record.add(formatData(JSON.parse(req.body)))
                 .then(r => {
                     res.status(200).json(r)
                 })

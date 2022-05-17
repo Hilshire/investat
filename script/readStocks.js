@@ -9,7 +9,9 @@ const host = 'http://localhost:3000/'
 try {
     (async function(){
         const stocks = readFileSync(filePath).toString()
-        const rows = stocks.split(/\r\n|\n/).map(
+        let rows = stocks.split(/\r\n|\n/)
+        rows.shift()
+        rows = rows.map(
             row => {
                 const [time, name, average, count, positionAver, positionCount] = row.split(',')
                 const rst = {
@@ -29,7 +31,6 @@ try {
                 return rst
             }
         )
-        rows.shift()
         for (let i=0;i<rows.length;i++) {
             await fetch(join(host,'/api/records'), {
                 method: 'post',

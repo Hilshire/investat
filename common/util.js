@@ -12,7 +12,20 @@ function verifyJwt(token) {
         return false
     }
 }
+function formatDate(d) {
+    if (!(d instanceof Date)) {
+        d = new Date(d)
+    }
+    return d.toJSON().split('T')[0]
+}
+function formatData(data) {
+    if (data.date) {
+        data.date = formatDate(data.date)
+    }
+    return data
+}
 export {
     getToken,
-    verifyJwt
+    verifyJwt,
+    formatData
 }

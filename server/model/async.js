@@ -37,7 +37,7 @@ try {
                 connection.query(`CREATE TABLE IF NOT EXISTS \`${TABLE}\`(
                     \`id\` INT UNSIGNED AUTO_INCREMENT,
                     \`name\` VARCHAR(40) NOT NULL,
-                    \`date\` VARCHAR(40) NOT NULL,
+                    \`date\` DATE NOT NULL,
                     \`price\` INT NOT NULL, # 购买单价
                     \`count\` INT NOT NULL, # 购买数量
                     \`prev_count\` INT,     # 买后持仓 TODO: 修改字段名

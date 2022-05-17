@@ -1,5 +1,5 @@
 const record = require('../../../server/model/Record')
-const { verifyJwt } = require('../../../common/util')
+const { verifyJwt, formatData } = require('../../../common/util')
 
 module.exports = function getRecords(req, res) {
     const { method, query: { id }, body, headers: { token } } = req
@@ -17,6 +17,7 @@ module.exports = function getRecords(req, res) {
             error: e.errno || 0
         })
     }
+
     switch(method) {
         case 'GET':
             return record.query(id)
@@ -25,7 +26,7 @@ module.exports = function getRecords(req, res) {
                 }) 
                 .catch(handleError)
         case 'PUT':
-            return record.put(JSON.parse(body))
+            return record.put(formatData(JSON.parse(body)))
                 .then(r => {
                     res.status(200).json(r)
                 }).catch(handleError)

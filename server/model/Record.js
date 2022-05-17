@@ -59,7 +59,7 @@ class Record {
     }
     queryList() {
         return this.getConnection().then((c) => {
-            return wp(c, `SELECT * from ${table}`).catch(handleError).finally(c.release())
+            return wp(c, `SELECT * from ${table} ORDER BY date DESC`).catch(handleError).finally(c.release())
         }).catch(handleError)
     }
 }
