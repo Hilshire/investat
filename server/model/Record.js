@@ -3,6 +3,7 @@ const pool = require('./pool')
 const table = process.env.TABLE
 
 function wp(c, str) {
+    // eslint-disable-next-line
     return new Promise(function(resolve, reject) {
         c.query(str, function(err, result) {
             if (err) reject(err)
@@ -22,6 +23,7 @@ class Record {
     }
     getConnection() {
         const pool = this._pool
+        // eslint-disable-next-line
         return new Promise(function(resolve, reject) {
             pool.getConnection(function(err, connection) {
                 if (err) {

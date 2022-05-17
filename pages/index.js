@@ -101,6 +101,7 @@ export default function Home() {
         </thead>
         <tbody>
           {list.map((d, i) => {
+            // eslint-disable-next-line
             const {name, date, price, count, prev_count, average_cost, type, ratio, group, id} = d
             return <tr key={id}>
               <td>{i+1}</td>
