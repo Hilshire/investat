@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Table, Button, Modal } from 'react-bootstrap'
 import { useRouter } from 'next/router'
-import { Modify } from '../common/components'
+import { Modify, Chart } from '../common/components'
 import { getToken } from '../common/util'
-import { TYPE, GROUP } from '../common/constant'
+import { TYPE } from '../common/constant'
 
 const { Footer, Body, Header } = Modal
 
@@ -80,6 +80,7 @@ export default function Home() {
   return (
     <>
       <Button onClick={add}>新增</Button>
+      <Chart list={list}></Chart>
       <Table>
         <thead>
           <tr>
