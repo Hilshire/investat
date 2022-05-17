@@ -1,6 +1,7 @@
 import { Form, Button } from 'react-bootstrap'
 import DatePicker from 'react-datepicker'
 import { useRouter } from 'next/router'
+import { TYPE, GROUP } from '../../common/constant'
 
 const { Group, Label, Control, Select } = Form
 
@@ -34,7 +35,7 @@ export default function Modify({data, setData, type, token, queryList}) {
     data = {
       ...data,
       average_cost: data.average_cost ? Math.round(data.average_cost * 10000) : undefined,
-      price: Math.round(data.price * 100)
+      price: Math.round(data.price * 10000)
     }
 
     Object.keys(data).filter(k => !data[k]).forEach(k => delete data[k])
@@ -62,18 +63,13 @@ export default function Modify({data, setData, type, token, queryList}) {
         <Group>
           <Label>组合</Label>
           <Select onChange={e => setData({ ...data, group: e.target.value }) } required value={data.group}>
-            <option value={1}>定投计划</option>
-            <option value={2}>股市计划</option>
-            <option value={3}>ETF拯救世界</option>
+            {Object.keys(GROUP).map(k => <option value={+k} key={k}>{GROUP[k]}</option>)}
           </Select>
         </Group>
         <Group>
           <Label>类型</Label>
           <Select onChange={e => setData({ ...data, type: e.target.value })} required value={data.type}>
-            <option value={1}>货币基金</option>
-            <option value={2}>债券基金</option>
-            <option value={3}>指数基金</option>
-            <option value={4}>股票</option>
+            {Object.keys(TYPE).map(k => <option value={+k} key={k}>{TYPE[k]}</option>)}
           </Select>
         </Group>
         <Group>

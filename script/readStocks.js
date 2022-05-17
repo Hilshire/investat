@@ -1,8 +1,9 @@
 const { readFileSync } = require('fs')
 const { join } = require('path')
+require('dotenv').config()
 
 const filePath = join(__dirname, './stocks.csv')
-const token = ''
+const token = process.env.TOKEN
 const host = 'http://localhost:3000/'
 // {name, date, price, count, prev_count, average_cost, type, ratio, group, id}
 
@@ -13,11 +14,12 @@ try {
         rows.shift()
         rows = rows.map(
             row => {
-                const [time, name, average, count, positionAver, positionCount] = row.split(',')
+                const [time, name, average, count, cost,
+                    positionAver, positionCount] = row.split(',')
                 const rst = {
                     name,
                     date: new Date(time),
-                    price: Math.round(average * 100),
+                    price: Math.round(average * 10000),
                     count,
                     average_cost: Math.round(positionAver * 10000),
                     //cost: cost || count * average,

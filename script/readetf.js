@@ -1,8 +1,9 @@
 const { readFileSync } = require('fs')
 const { join } = require('path')
+require('dotenv').config()
 
 const filePath = join(__dirname, './etfs.csv')
-const token = ''
+const token = process.env.TOKEN || ''
 const host = 'http://localhost:3000/'
 // {name, date, price, count, prev_count, average_cost, type, ratio, group, id}
 
@@ -19,11 +20,11 @@ try {
                 const rst = {
                     name,
                     date: new Date(time),
-                    price: Math.round(average * 100),
+                    price: Math.round(average * 10000),
                     count,
                     average_cost: Math.round(positionAver * 10000),
                     //cost: cost || count * average,
-                    prev_count: positionCount,
+                    prev_count: Math.round(positionCount),
                     ratio,
                     type: 3,
                     group: 2
