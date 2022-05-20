@@ -100,7 +100,7 @@ export default function Modify({data, setData, type, token, queryList}) {
         </Group> */}
         <Group>
           <Label>平均成本</Label>
-          <Control type='number' onChange={e => setData({ ...data, average_cost: Math.round(e.target.value) })} value={Math.round(data.average_cost)}></Control>
+          <Control type='number' onChange={e => setData({ ...data, average_cost: e.target.value })} value={data.average_cost}></Control>
         </Group>
         <Group>
           <Label>持仓</Label>
